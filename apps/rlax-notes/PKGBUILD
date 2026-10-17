@@ -1,0 +1,33 @@
+pkgname=rlax-notes
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Lightweight GTK4 text and Markdown editor'
+arch=('x86_64')
+url='https://github.com/acil23/customAppRlax'
+license=('MIT')
+depends=('gtk4')
+makedepends=('rust' 'base-devel')
+source=(
+  "git+https://github.com/acil23/customAppRlax.git#tag=v${pkgver}"
+)
+sha256sums=('SKIP')
+
+prepare() {
+  cd "${srcdir}/customAppRlax"
+}
+
+build() {
+  cd "${srcdir}/customAppRlax"
+  cargo build --release --locked -p rlax-notes
+}
+
+package() {
+  install -Dm755 "${srcdir}/customAppRlax/target/release/rlax-notes" \
+    "${pkgdir}/usr/bin/rlax-notes"
+  install -Dm644 "${srcdir}/customAppRlax/apps/rlax-notes/assets/icon-removebg.png" \
+    "${pkgdir}/usr/share/icons/hicolor/512x512/apps/rlax-notes.png"
+  install -Dm644 "${srcdir}/customAppRlax/apps/rlax-notes/rlax-notes.desktop" \
+    "${pkgdir}/usr/share/applications/rlax-notes.desktop"
+  install -Dm644 "${srcdir}/customAppRlax/LICENSE" \
+    "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

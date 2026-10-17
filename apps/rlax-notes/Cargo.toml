@@ -1,0 +1,13 @@
+[package]
+name = "rlax-notes"
+version = "0.1.0"
+edition = "2024"
+description = "A lightweight plain-text editor for Linux desktops"
+license = "MIT"
+
+[[bin]]
+name = "rlax-notes"
+path = "src/main.rs"
+
+[dependencies]
+gtk = { package = "gtk4", version = "0.11" }

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Rlax Notes
+GenericName=Text Editor
+Comment=Lightweight plain-text and Markdown editor
+Exec=rlax-notes
+Icon=rlax-notes
+Terminal=false
+Categories=Utility;TextEditor;
+Keywords=notes;notepad;text;markdown;rlax;
+StartupNotify=true

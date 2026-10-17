@@ -1,46 +1,57 @@
-# Custom App untuk Hyprland
+# Rlax Apps
 
-Aplikasi desktop ringan untuk Arch Linux dan Hyprland, dengan fokus pada fitur yang benar-benar digunakan. Fitur dan nama aplikasi belum ditentukan; dokumen ini menetapkan usulan awal tech stack agar pengembangan berikutnya punya arah yang jelas.
+Kumpulan aplikasi desktop ringan untuk Arch Linux dan Hyprland. Setiap aplikasi memiliki source code dan assets sendiri di bawah `apps/`.
 
-## Tujuan
+## Aplikasi
 
-- Menyediakan hanya fitur yang dipilih, tanpa membawa fitur bawaan yang tidak diperlukan.
-- Berjalan sebagai aplikasi native di Linux/Wayland.
-- Berintegrasi dengan Hyprland jika fitur yang dibuat memang membutuhkannya.
-- Menjaga penggunaan dependensi dan proses latar belakang tetap minimal.
+- **Rlax Notes** — editor teks sederhana untuk menulis, membuka, dan menyimpan `.txt` serta `.md`. Detail progres ada di [PROGRESS.md](PROGRESS.md).
 
-## Usulan tech stack
+## Instalasi dan menjalankan Rlax Notes
 
-| Bagian | Teknologi | Alasan |
-|---|---|---|
-| Bahasa | **Rust** | Menghasilkan aplikasi native, efisien, dan memiliki pemeriksaan keamanan memori saat kompilasi. |
-| UI | **GTK4** dengan binding Rust `gtk4-rs` | Toolkit native Linux dengan integrasi Wayland dan aksesibilitas yang baik. |
-| Overlay/bar (opsional) | **gtk4-layer-shell** | Dipakai hanya jika aplikasi perlu membuat panel, OSD, atau overlay layer-shell di Wayland. |
-| Integrasi Hyprland | **Hyprland IPC** melalui Unix socket | Untuk membaca event atau mengirim perintah Hyprland hanya ketika fitur aplikasi memerlukannya. |
-| Konfigurasi | **TOML** | Format teks yang mudah dibaca dan diedit pengguna. |
-| Data/serialisasi | **Serde** | Membaca dan menulis konfigurasi secara terstruktur. |
-| Build dan dependensi Rust | **Cargo** | Toolchain standar Rust untuk build, pengujian, dan manajemen dependensi. |
+### Instalasi dari paket Arch
 
-### Prinsip pemilihan dependensi
+Di Arch Linux, setelah source `v0.1.0` dipublikasikan, jalankan:
 
-- Hindari Electron dan runtime browser untuk UI sederhana.
-- Jangan menambahkan daemon, database, atau framework async sebelum ada kebutuhan nyata.
-- Gunakan GTK4 biasa untuk jendela aplikasi; tambahkan `gtk4-layer-shell` hanya untuk fitur yang memang membutuhkan layer-shell.
-- Hubungkan ke Hyprland secara opsional agar fitur UI yang tidak terkait compositor tetap dapat berjalan sendiri.
+```sh
+git clone https://github.com/acil23/customAppRlax.git
+cd customAppRlax
+git checkout v0.1.0
+cd apps/rlax-notes
+makepkg -si
+```
 
-## Target awal
+Paket memasang binary, ikon launcher, dan entri menu. GTK4 dipasang sebagai dependensi runtime melalui pacman; library GTK sistem tidak disalin ke paket aplikasi. Setelah instalasi, **Rlax Notes** dapat dibuka dari launcher desktop atau terminal:
 
-- **Sistem operasi:** Arch Linux
-- **Compositor:** Hyprland
-- **Display server:** Wayland
-- **Arsitektur:** mengikuti arsitektur yang didukung toolchain Rust dan paket GTK4 di sistem pengguna.
+```sh
+rlax-notes
+```
 
-## Status
+Perintah tersebut membangun paket dari source dan memasangnya dengan pacman. Untuk menghapusnya, jalankan `sudo pacman -R rlax-notes`. PKGBUILD berada di `apps/rlax-notes/PKGBUILD`.
 
-Dokumen ini adalah rancangan awal, bukan implementasi. Nama aplikasi, fitur versi pertama, desain UI, dan strategi distribusi (misalnya paket Arch atau build manual) belum ditentukan. Stack dapat disederhanakan atau disesuaikan setelah daftar fitur utama disepakati.
+### Build dan jalankan dari source
 
-## Rujukan teknologi
+Prasyarat build di Arch Linux: Rust/Cargo, GTK4 development files, dan toolchain build.
 
-- [Dokumentasi Hyprland IPC](https://wiki.hypr.land/IPC/)
-- [gtk4-layer-shell untuk Rust](https://docs.rs/gtk4-layer-shell/latest/gtk4_layer_shell/)
-- [Repositori gtk4-layer-shell](https://github.com/wmww/gtk4-layer-shell)
+```sh
+sudo pacman -S --needed base-devel rust gtk4
+cargo run --release -p rlax-notes
+```
+
+Binary release pada build awal berukuran sekitar 323 KiB; ukuran dapat berbeda menurut versi toolchain dan dependensi. GTK4 tetap merupakan library sistem, bukan disalin ke dalam paket aplikasi.
+
+## Tech stack
+
+- Rust + Cargo workspace
+- GTK4 melalui `gtk4-rs`
+- Integrasi Hyprland hanya ditambahkan jika fitur aplikasi membutuhkannya
+
+## Struktur proyek
+
+```text
+apps/
+└── rlax-notes/
+    ├── assets/     # logo, ikon, dan aset milik aplikasi ini
+    └── src/        # source code aplikasi ini
+```
+
+Folder `assets/` disiapkan per aplikasi; aset akan ditambahkan saat diperlukan.
